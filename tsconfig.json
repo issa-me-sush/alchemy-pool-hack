@@ -17,6 +17,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "components/auth/Login.jsx", "components/AlchemyProvider.jsx", "pages/_document.jsx", "src/providers.jsx", "next.config.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "components/auth/Login.jsx", "components/providers/AlchemyProvider.tsx", "pages/_document.jsx", "src/providers.jsx", "next.config.mjs"],
   "exclude": ["node_modules"]
 }

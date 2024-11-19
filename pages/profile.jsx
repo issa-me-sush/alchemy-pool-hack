@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useUser,useLogout } from '@account-kit/react'
+import BottomNav from '../components/BottomNav'
 
 export default function Profile() {
   const { logout } = useLogout();
