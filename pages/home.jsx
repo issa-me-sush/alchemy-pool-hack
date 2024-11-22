@@ -54,8 +54,8 @@ export default function Home() {
             <div>
                 <div className='flex justify-between p-5 items-center'>
                     <div className='hidden md:flex space-x-10'>
-                        <h1>team</h1>
-                        <h1>github</h1>
+                        {/* <h1>team</h1> */}
+                        <h1 className='font-extrabold'>fren</h1>
                     </div>
                     <img className='w-10 h-10' src='frencircle-dark.png' />
                     <button
