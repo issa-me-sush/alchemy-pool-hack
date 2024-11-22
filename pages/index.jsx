@@ -29,7 +29,11 @@ export default function Index() {
           on your everyday interactions
         </h1>
         <div className='flex justify-center w-full md:mt-20'>
-          <div className='rounded-xl h-96 md:w-1/2 w-full m-10 md:m-0 bg-white opacity-10' />
+          <img 
+            src='frencircle1.jpeg' 
+            alt='FrenCircle Preview'
+            className='rounded-xl h-96 md:w-1/2 w-full m-10 md:m-0 object-cover'
+          />
         </div>    
       </div>
     </div>
