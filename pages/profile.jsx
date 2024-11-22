@@ -15,8 +15,8 @@ export default function Profile() {
     const fetchTags = async () => {
       if (user?.address) {
         try {
-          console.log('🔍 Fetching tags for wallet:', user.wallet.address);
-          const response = await fetch(`/api/get-tags?walletAddress=${user.wallet.address}`);
+          console.log('🔍 Fetching tags for wallet:', user.address);
+          const response = await fetch(`/api/get-tags?walletAddress=${user.address}`);
           
           if (!response.ok) {
             throw new Error('Failed to fetch tags');
@@ -42,7 +42,7 @@ export default function Profile() {
     
     try {
       // First fetch CIDs for this user
-      const response = await fetch(`/api/get-cids?walletAddress=${user.wallet.address}`);
+      const response = await fetch(`/api/get-cids?walletAddress=${user.address}`);
       const data = await response.json();
       
       if (!data.cids || !Array.isArray(data.cids)) {
@@ -68,7 +68,7 @@ export default function Profile() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `friendcircle-data-${user.wallet.address.slice(0,6)}.txt`;
+      a.download = `friendcircle-data-${user.address.slice(0,6)}.txt`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);

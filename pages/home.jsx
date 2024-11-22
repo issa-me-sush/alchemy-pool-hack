@@ -17,8 +17,8 @@ export default function Home() {
         const fetchUserTags = async () => {
             if (user?.address) {
                 try {
-                    console.log('🔍 Fetching tags for wallet:', user.wallet.address);
-                    const response = await fetch(`/api/get-tags?walletAddress=${user.wallet.address}`);
+                    console.log('🔍 Fetching tags for wallet:', user.address);
+                    const response = await fetch(`/api/get-tags?walletAddress=${user.address}`);
 
                     if (!response.ok) {
                         throw new Error('Failed to fetch tags');

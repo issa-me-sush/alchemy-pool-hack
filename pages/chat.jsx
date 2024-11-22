@@ -6,6 +6,7 @@ import { createLightNode, createEncoder, createDecoder, Protocols, waitForRemote
 import protobuf from 'protobufjs';
 import { useUser } from '@account-kit/react';
 import { useRouter } from 'next/router';
+import { useContract } from '../hooks/useContract';
 
 // Define message structure using Protobuf
 const ChatMessage = new protobuf.Type('ChatMessage')
@@ -37,6 +38,8 @@ export default function Chat() {
   const [isConnecting, setIsConnecting] = useState(true);
   const [votes, setVotes] = useState({});
   const [voting, setVoting] = useState("")
+  const { handleUpvote, handleDownvote, getReputationScore } = useContract();
+  const [userReputations, setUserReputations] = useState({});
 
   useEffect(() => {
     const initWaku = async () => {
@@ -125,41 +128,47 @@ export default function Chat() {
     }
   };
 
-  const handleVote = async (messageId, voteType) => {
-    // Optimistically update UI
-    setVotes(prev => ({
-      ...prev,
-      [messageId]: {
-        ...prev[messageId],
-        [voteType]: !prev[messageId]?.[voteType]
-      }
-    }));
-
+  const handleVoteClick = async (messageId, sender, voteType) => {
     try {
-      // Send to backend
-      await fetch('/api/vote', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messageId,
-          voteType,
-          value: !votes[messageId]?.[voteType]
-        })
-      });
-    } catch (error) {
-      console.error('Failed to save vote:', error);
-      // Revert on error
+      if (voteType === "up") {
+        await handleUpvote(sender);
+      } else {
+        await handleDownvote(sender);
+      }
+      
+      // Update reputation after vote
+      const newReputation = await getReputationScore(sender);
+      setUserReputations(prev => ({
+        ...prev,
+        [sender]: newReputation
+      }));
+
+      // Update UI voting state
       setVotes(prev => ({
         ...prev,
         [messageId]: {
           ...prev[messageId],
-          [voteType]: !prev[messageId]?.[voteType]
+          [voteType === "up" ? "upvote" : "downvote"]: true
         }
       }));
+    } catch (error) {
+      console.error('Vote failed:', error);
     }
   };
+
+  useEffect(() => {
+    const loadReputations = async () => {
+      const reputations = {};
+      for (const msg of messages) {
+        if (!userReputations[msg.sender]) {
+          reputations[msg.sender] = await getReputationScore(msg.sender);
+        }
+      }
+      setUserReputations(prev => ({ ...prev, ...reputations }));
+    };
+    
+    loadReputations();
+  }, [messages]);
 
   if (isConnecting) {
     return (
@@ -210,21 +219,32 @@ export default function Chat() {
                     : 'bg-white bg-opacity-15 text-white'
                 }`}>
                   <p>{msg.text}</p>
-                  {msg.sender != user?.wallet.address && <div className='flex space-x-1'>
-                    <button onClick={() => setVoting("up")}>
-                    
-                    <ChevronUp className={voting == up && 'bg-green-600'} />
-                    </button>
-                    <button onClick={() => setVoting("down")}>
-                    <ChevronDown className={voting == down && 'bg-red-600'} />
-                    </button>
-                    </div>}
+                  {msg.sender != user?.wallet.address && (
+                    <div className='flex space-x-1'>
+                      <button 
+                        onClick={() => handleVoteClick(msg.id, msg.sender, "up")}
+                        disabled={votes[msg.id]?.upvote}
+                      >
+                        <ChevronUp className={voting === "up" ? 'bg-green-600' : ''} />
+                      </button>
+                      <button 
+                        onClick={() => handleVoteClick(msg.id, msg.sender, "down")}
+                        disabled={votes[msg.id]?.downvote}
+                      >
+                        <ChevronDown className={voting === "down" ? 'bg-red-600' : ''} />
+                      </button>
+                      <span className="text-sm opacity-75">
+                        Score: {userReputations[msg.sender]?.upvotes - userReputations[msg.sender]?.downvotes}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 
                 {!msg.isUser && (
                   <div className="flex gap-2 ml-2">
                     <button 
-                      onClick={() => handleVote(msg.id, 'upvote')}
+                      onClick={() => handleVoteClick(msg.id, msg.sender, "up")}
+                      disabled={votes[msg.id]?.upvote}
                       className={`p-1 rounded-full transition-colors ${
                         votes[msg.id]?.upvote 
                           ? 'bg-white bg-opacity-15' 
@@ -237,7 +257,8 @@ export default function Chat() {
                       />
                     </button>
                     <button 
-                      onClick={() => handleVote(msg.id, 'downvote')}
+                      onClick={() => handleVoteClick(msg.id, msg.sender, "down")}
+                      disabled={votes[msg.id]?.downvote}
                       className={`p-1 rounded-full transition-colors ${
                         votes[msg.id]?.downvote 
                           ? 'bg-white bg-opacity-15' 
