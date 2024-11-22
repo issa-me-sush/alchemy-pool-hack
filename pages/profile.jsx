@@ -68,7 +68,7 @@ export default function Profile() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `friendcircle-data-${user.address.slice(0,6)}.txt`;
+      a.download = `frenCircle-data-${user.address.slice(0,6)}.txt`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -83,7 +83,7 @@ export default function Profile() {
   return (
     <div className="">
       <Head>
-        <title>FriendCircle</title>
+        <title>frenCircle</title>
       </Head>
       <div>
       <div className='flex justify-between p-5 items-center'>

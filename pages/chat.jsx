@@ -28,7 +28,7 @@ export default function Chat() {
   }
 
   const { tag } = router.query;
-  const contentTopic = `/friendcircle/1/${tag || 'default'}/proto`;
+  const contentTopic = `/frenCircle/1/${tag || 'default'}/proto`;
   
  const user = useUser();
 
@@ -182,7 +182,7 @@ export default function Chat() {
   return (
     <div className="h-screen flex flex-col">
       <Head>
-        <title>FriendCircle - {tag}</title>
+        <title>frenCircle - {tag}</title>
       </Head>
       
       <div className='flex justify-between p-5 items-center border-b border-gray-800'>

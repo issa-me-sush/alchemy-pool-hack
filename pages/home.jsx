@@ -49,7 +49,7 @@ export default function Home() {
     return (
         <div className="">
             <Head>
-                <title>FriendCircle</title>
+                <title>frenCircle</title>
             </Head>
             <div>
                 <div className='flex justify-between p-5 items-center'>
